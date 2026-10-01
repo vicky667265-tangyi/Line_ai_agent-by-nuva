@@ -1,0 +1,258 @@
+{
+  "name": "AI小精靈",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aef4fd1c-31a1-41f5-b040-c574527ab74f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -368,
+        176
+      ],
+      "id": "9d5257c8-0961-4a1a-986d-71076a9c20e0",
+      "name": "Webhook",
+      "webhookId": "aef4fd1c-31a1-41f5-b040-c574527ab74f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 4dXLQ6n7OCnoh0KplJLw6VJ7VhvVnJ4GqVybpq8R91HMXAk+pCmGFAYADUGx9LZPwslxSj+Mvkfq598JnE756AGlTGKswt4E5D+qssPjTYYox33V6QOYMrNaN1PPU4AZDHmY0trriQWlvqXHtLMl1AdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"replyToken\":\"{{ $('Webhook').item.json.body.events[0].replyToken }}\",\n    \"messages\":[\n        {\n            \"type\":\"text\",\n            \"text\":{{ JSON.stringify($json.output)}}\n        }\n    ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        208,
+        176
+      ],
+      "id": "dce3d812-252e-4323-accf-e91158ee064c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "## Line\nline official account manager\nline document send message\nline developer\nwehook\n",
+        "height": 128,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -512,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "d860bbaa-b849-4fcf-8f7a-f470778c3f0f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "#Messaging API settings\nWebhook URL\nChannel access token (long-lived)\nJSON.stringify() 斷行",
+        "height": 96,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "619c78dd-1b81-45a8-a707-dc10e84f9db2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=# 用戶訊息\n{{ $json.body.events[0].message.text }}"
+            },
+            {
+              "role": "system",
+              "content": "#角色\n你叫小精靈，你擁有天馬行空的idea\n\n#任務\n用你的名義跟客戶聊天，要先自我介紹，嚴禁不雅字眼，可使用emoji。\n唱一首個給用戶\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -368,
+        -160
+      ],
+      "id": "ca7de9b3-c918-4854-a169-a7ebe5c20cf6",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# AI\n加入use&system",
+        "height": 112,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "0b41faa9-2995-478f-a645-b1270d030eb5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# 用戶訊息\n{{ $json.body.events[0].message.text }}",
+        "options": {
+          "systemMessage": "#身份\n你是一個住在創作者手機裡的靈感小精靈。你不是單純的文字生成工具，而是創作者的創作夥伴。你的任務是陪伴、啟發與引導創作者，把模糊的想法逐步發展成有感染力的作品。\n# 使命\n陪伴創作者突破寫作瓶頸，讓想法從模糊逐漸變得清晰。\n用提問、聯想與不同角度，啟發創作者的想像力。\n尊重創作者的想法，不直接否定，而是協助、延伸與調整。\n讓創作者感受到被理解、被支持與被重視。\n\n#回應\n繁體中文，自然且有溫度。\n不敷衍、不冷漠、不只給一句簡短答案。單次回覆不超過 350 字。每次針對創作問題，原則上提供 2～3 個具體靈感或方向\n\n#流程\n當創作者說「幫我寫」、「幫我想」等字眼\n先理解創作者需求\n提供簡潔的大綱或 2～3 個創作方向\n詢問創作者比較喜歡哪個方向\n根據創作者的想法循序漸進\n不一次生成全部內容，陪伴創作者\n\n#要求\n對話中，持續延續創作者已確立的想法，不任意更改，除非創作者有說明\n當創作者說「謝謝」時，回應自然"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -144,
+        176
+      ],
+      "id": "eef1ac3c-5501-45cc-aea0-772c00a8f15e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        400
+      ],
+      "id": "dad9bad0-20e6-4a21-b1b4-c43545846935",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.events[0].source.userId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -16,
+        400
+      ],
+      "id": "44f33912-e2fd-4c4c-99fa-abd73a34ce81",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "dd735f93-83ef-4bc9-8d8f-5313f257eeee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "965dc430808baec923ebf8b61fadc8836a5e509262d023e9bae8ff5f4651ef97"
+  },
+  "nodeGroups": [],
+  "id": "5rPoyx5EJwcIQDmL",
+  "tags": []
+}
